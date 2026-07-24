@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Lagos — Waste Reporting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="icon" href="image/img1.png"/>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">CL</div>
+    <div class="brand-name">Clean <span>Lagos</span></div>
+  </div>
+  <div class="view-switch">
+    <button id="btn-resident" class="active">Resident</button>
+    <button id="btn-agency">Agency Dashboard</button>
+  </div>
+  <div class="bell-wrap">
+    <button class="bell-btn" id="bell-btn" aria-label="Notifications">
+      🔔<span class="bell-dot" id="bell-dot" style="display:none;">0</span>
+    </button>
+    <div class="notif-panel" id="notif-panel"></div>
+  </div>
+</div>
+
+<main>
+
+  <!-- ============ RESIDENT VIEW ============ -->
+  <div class="view active" id="view-resident">
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Lagos State · Waste Reporting</p>
+        <h1>See a problem.<br>Tag it. Track it. Done.</h1>
+        <p>Snap a photo of an overflowing bin, illegal dumping, or a missed collection, drop a GPS pin, and your local waste agency picks it up, no phone calls, no guesswork.
+</p>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num" id="hero-open">—</div><div class="lbl">Open reports citywide</div></div>
+        <div class="hero-stat"><div class="num" id="hero-resolved">—</div><div class="lbl">Resolved this month</div></div>
+        <div class="hero-stat"><div class="num" id="hero-lgas">20</div><div class="lbl">LGAs covered</div></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Report an issue</h2>
+        <span class="sub">Takes under a minute</span>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="field">
+            <label>What's the issue?</label>
+            <div class="type-grid" id="type-grid">
+              <button type="button" class="type-opt selected" data-type="overflow">🗑️ Overflowing bin</button>
+              <button type="button" class="type-opt" data-type="dumping">🚫 Illegal dumping</button>
+              <button type="button" class="type-opt" data-type="missed">📅 Missed collection</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Local Government Area</label>
+            <select id="report-lga"></select>
+          </div>
+          <div class="field">
+            <label>Location</label>
+            <div class="gps-row">
+              <input type="text" id="report-coords" placeholder="Tap 'Use my location' or type an address" readonly>
+              <button type="button" class="btn-ghost" id="gps-btn">📍 Use my location</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Photo</label>
+            <div class="photo-drop" id="photo-drop">
+              <span id="photo-drop-text">Tap to attach a photo of the issue</span>
+              <input type="file" accept="image/*" id="photo-input">
+            </div>
+          </div>
+          <div class="field">
+            <label>Describe what you see</label>
+            <textarea id="report-desc" placeholder="E.g. Bin has been overflowing onto the road for 3 days near the bus stop."></textarea>
+          </div>
+          <button class="btn-primary" id="submit-report">Submit report</button>
+          <div class="form-msg" id="form-msg">Report submitted — track its status below.</div>
+        </div>
+
+        <div class="card-dark">
+          <h3 style="font-family:var(--font-display); font-size:15px; margin:0 0 14px;">Your cleanliness gauge</h3>
+          <div class="gauge">
+            <svg id="gauge-svg" width="86" height="86" viewBox="0 0 86 86"></svg>
+            <div class="gauge-label">
+              <span class="big" id="gauge-pct">—</span>
+              <span class="small">resolution rate in your LGA</span>
+            </div>
+          </div>
+          <hr style="border:none; border-top:1px solid var(--line); margin:20px 0;">
+          <h3 style="font-family:var(--font-display); font-size:15px; margin:0 0 12px;">Why GPS matters</h3>
+          <p style="font-size:12.5px; line-height:1.6; color:rgba(244,239,230,0.65); margin:0;">
+            Pinning the exact spot lets the agency route a truck or crew directly, instead of searching a whole street. Reports with a location tag get resolved faster.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Track your reports</h2>
+        <span class="sub" id="tracker-count">0 reports</span>
+      </div>
+      <div class="tracker-list" id="tracker-list"></div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Collection schedule</h2>
+        <span class="sub">By LGA</span>
+      </div>
+      <div class="card-dark" style="padding:8px 26px 22px;">
+        <table class="sched">
+          <thead><tr><th>LGA</th><th>Collection days</th><th>Truck zone</th></tr></thead>
+          <tbody id="schedule-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Community cleanliness rankings</h2>
+        <span class="sub">Resolution rate, last 30 days</span>
+      </div>
+      <div class="rank-list" id="rank-list"></div>
+    </section>
+
+  </div>
+
+  <!-- ============ AGENCY VIEW ============ -->
+  <div class="view" id="view-agency">
+
+    <section style="padding-top:40px;">
+      <p class="eyebrow">Lagos Waste Management Agency</p>
+      <h1 style="font-family:var(--font-display); font-size:30px; margin:0 0 28px;">Operations dashboard</h1>
+    </section>
+
+    <div class="stat-cards" id="stat-cards"></div>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Complaint heat map</h2>
+        <span class="sub">Click an LGA to filter the queue</span>
+      </div>
+      <div class="heatmap-wrap">
+        <div>
+          <div class="heat-grid" id="heat-grid"></div>
+          <div class="legend">
+            <span><i style="background:#2A3038;"></i>Low</span>
+            <span><i style="background:var(--amber);"></i>Moderate</span>
+            <span><i style="background:var(--red);"></i>High density</span>
+          </div>
+        </div>
+        <div class="card-dark">
+          <h3 style="font-family:var(--font-display); font-size:14px; margin:0 0 14px;">Resolution rate, all reports</h3>
+          <div class="gauge">
+            <svg id="gauge-svg-2" width="86" height="86" viewBox="0 0 86 86"></svg>
+            <div class="gauge-label">
+              <span class="big" id="gauge-pct-2">—</span>
+              <span class="small">resolved vs. total filed</span>
+            </div>
+          </div>
+          <p style="font-size:12px; color:rgba(244,239,230,0.55); margin-top:18px; line-height:1.6;">
+            Filter: <strong id="filter-label" style="color:var(--paper);">All LGAs</strong>
+            <button id="clear-filter" class="btn-ghost" style="margin-left:10px; padding:5px 10px; font-size:11px; display:none;">Clear</button>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Complaint queue</h2>
+        <span class="sub" id="queue-count"></span>
+      </div>
+      <div class="card-dark" style="padding:8px 20px 16px; overflow-x:auto;">
+        <table class="queue-table">
+          <thead><tr><th>ID</th><th>Type</th><th>LGA</th><th>Filed</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="queue-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+</main>
+
+<footer>CLEAN LAGOS · A civic waste-reporting platform</footer>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
